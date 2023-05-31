@@ -18,30 +18,16 @@ $$
         varid_empresa SMALLINT;
         varValor_total BIGINT;
 
-		--PRODUCTOS
-        varValorProduct1 INTEGER;
-        varValorProduct2 INTEGER;
-        varValorProduct3 INTEGER;
-		--VALOR BRUTO PRODUCTOS
-        valorBruto1 BIGINT;
-        valorBruto2 BIGINT;
-        valorBruto3 BIGINT;
-		--IVA PRODUCTO
-		isIva1	BOOLEAN;
-		isIva2	BOOLEAN;
-		isIva3	BOOLEAN;
-		
-		--
 		_products         		INTEGER[][];
 		
 		_isIva 		      		BOOLEAN;
-		_isPromo				BOLEAN;	
+		_isPromo				BOOLEAN;	
 		
 		_porce_iva		  		DECIMAL(2,0);
 		_porce_descue			DECIMAL(3,0);
 		_porce_product			DECIMAL(3,0);
 		
-		_valor_iva		  		BIGINT;	
+		_valor_iva		  		BIGINT;
 		_valor_porce			BIGINT;
 		
 		_precio_venta_producto  BIGINT;
@@ -65,29 +51,19 @@ $$
 		--id factura
         SELECT num_factura INTO id_fac FROM tab_pmtros;
 		id_fac = id_fac + 1 ;
-		UPDATE tab_pmtros SET num_factura = id_fac WHERE id_empresa = varid_empresa;
-		
--- 		--ENCABEZADO FACTURA
+		--incrementar id factura
+
+		--Insertar encabezado factura
 		INSERT INTO tab_enc_fact VALUES(id_fac,wid_cliente,fecha_hoy,varId_ciudad,wfor_pago,varValor_total); 
 
-
-
-
-        --  REFACTORIZADO CON UN FOR (NO PROBADO)
-        SELECT val_preciovta INTO varValorProduct1 FROM tab_prod WHERE id_prod = wid_prod1;
-        SELECT val_preciovta INTO varValorProduct2 FROM tab_prod WHERE id_prod = wid_prod2;
-        SELECT val_preciovta INTO varValorProduct3 FROM tab_prod WHERE id_prod = wid_prod3;
-
-        valorBruto1 = varValorProduct1 * wcant_prod1;
-        valorBruto2 = varValorProduct2 * wcant_prod2;
-        valorBruto3 = varValorProduct3 * wcant_prod3;
 			
 		_products := ARRAY[
 			ARRAY[wid_prod1,wcant_prod1 ],
 			ARRAY[wid_prod2,wcant_prod2 ],
 			ARRAY[wid_prod3,wcant_prod3]
 		 ];
-		--        _porce_iva
+
+		--  _porce_iva
 			SELECT por_iva INTO _porce_iva  FROM tab_pmtros;
 			SELECT por_desc INTO _porce_descue  FROM tab_pmtros;
 			
@@ -97,7 +73,6 @@ $$
 			SELECT ind_promocion INTO _isPromo FROM tab_prod WHERE id_prod = _products[I][1];
 			SELECT val_preciovta INTO _precio_venta_producto FROM tab_prod WHERE id_prod = _products[I][1];
 			
-
 			_valor_bruto = _precio_venta_producto * _products[I][2];
 
 			IF ind_iva THEN
@@ -115,7 +90,7 @@ $$
 			
 			
 
--- 			INSERT INTO tab_det_fact VALUES(id_fac,_products[I][1],_products[I][2],);
+ 			INSERT INTO tab_det_fact VALUES(id_fac,_products[I][1],_products[I][2],);
 			
 			
 			
